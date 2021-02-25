@@ -1,4 +1,4 @@
-import { CreateAppFactory } from '../interface'
+import { CreateAppFactory, Adapter } from '../interface'
 import QiankunAppFacotry from './qiankunappfactory'
 
 export const createAppFactory: CreateAppFactory = ({
@@ -7,10 +7,10 @@ export const createAppFactory: CreateAppFactory = ({
     lifecycles,
     globalState = {},
     defaultMountApp,
-    onFirstAppMounted
+    onFirstAppMounted,
 }) => {
     switch(adapter) {
-        case 'qiankun':
+        case Adapter.QianKun:
             return new QiankunAppFacotry({ apps, lifecycles, globalState, defaultMountApp, onFirstAppMounted })
 
         default:
