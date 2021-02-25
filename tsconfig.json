@@ -1,0 +1,29 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "moduleResolution": "node",
+      "module": "esnext",
+      "target": "es5",
+      "baseUrl": "./",
+      "types": [
+        
+      ],
+      "typeRoots": [
+        "./node_modules/@types"
+      ],
+      "lib": [
+        "dom",
+        "es2015"
+      ],
+      "jsx": "react",
+      "allowJs": false
+    },
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "node_modules"
+    ]
+  }
