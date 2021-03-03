@@ -1,36 +1,32 @@
-import { Adapter, AppFacotry, RegisterMicroApp } from './interface'
-import { createAppFactory } from './factory'
+import { Frame, Adapter, RegisterMicroAppResult, RegisterMicroAppParams } from './interface'
+import { QiankunFrame } from './frame'
+import { RefinedMicroAppFactory, MicroAppFactory } from './appfactory'
 
-let appfactory: AppFacotry 
+let appfactory: MicroAppFactory
 
-/**
- * 注册
- */
-const registerMicroApp: RegisterMicroApp = ({
-    adapter = Adapter.QianKun,
-    apps,
-    lifecycles = {},
-    globalState,
-    defaultMountApp,
-    onFirstAppMounted,
+const registerMicroApp: (registerMicroAppParams: RegisterMicroAppParams) => RegisterMicroAppResult = ({
+    adapter = Adapter.Qiankun,
+    ...otherParmas
 }) => {
-    appfactory = appfactory || createAppFactory({
-        adapter,
-        apps,
-        lifecycles,
-        globalState,
-        defaultMountApp,
-        onFirstAppMounted,
-    })
-
-    return {
-        start: appfactory.start,
-        onGlobalStateChange: appfactory.onGlobalStateChange,
-        setGlobalState: appfactory.setGlobalState,
-        offGlobalStateChange: appfactory.offGlobalStateChange,
+    if (appfactory) {
+        return appfactory.register()
     }
+
+    let frame: Frame;
+
+    switch(adapter) {
+        case Adapter.Qiankun:
+            frame = new QiankunFrame(otherParmas)
+            break
+
+        default:
+            // TODO，其他微前端框架
+    }
+
+    appfactory = new RefinedMicroAppFactory(frame)
+    return appfactory.register()
 }
 
 export {
-    registerMicroApp,
+    registerMicroApp
 }

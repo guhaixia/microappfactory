@@ -14,11 +14,11 @@
 
             配置为```'qiankun'```则会使用 ```qiankun``` 框架，目前仅支持```'qiankun'```，后续再补充其他微前端框架
 
-        * apps - ```<Array<RegistrableApp>``` - 必选，微应用的注册信息
+        * apps - ```Array<RegistrableApp>``` - 必选，微应用的注册信息
 
         * lifecycles - ```LifeCycles``` - 可选，全局的微应用生命周期钩子
 
-        * globalState - ```object``` - 可选，初始设置的全局状态
+        * globalState - ```Record<string, any>``` - 可选，初始设置的全局状态
 
         * defaultMountApp - ```string``` - 可选，默认进入的子应用
 
@@ -40,7 +40,7 @@
 
         * loader - ```(loading: boolean) => void``` - 可选，loading 状态发生变化时会调用的方法。
 
-        * props - ```object``` - 可选，主应用需要传递给微应用的数据。
+        * props - ```Record<string, any>``` - 可选，主应用需要传递给微应用的数据。
 
     * LifeCycles
 
@@ -64,9 +64,9 @@
 
         * start - ```() => void;``` 启动
 
-        * onGlobalStateChange - ```(callback: (state: object, prevState: object) => void, fireImmediately?: boolean) => void;```，在主应用监听全局状态，有变更触发 callback，fireImmediately = true 立即触发 callback
+        * onGlobalStateChange - ```(callback: (state: Record<string, any>, prevState: Record<string, any>) => void, fireImmediately?: boolean) => void;```，在主应用监听全局状态，有变更触发 callback，fireImmediately = true 立即触发 callback
 
-        * setGlobalState - ```(state: object) => boolean;```，设置全局状态
+        * setGlobalState - ```(state: Record<string, any>) => boolean;```，设置全局状态
 
         * offGlobalStateChange - ```() => boolean;```，移除全局状态监听，微应用 umount 时会默认调用
 
@@ -80,7 +80,7 @@
 
 * 第 1 种写法：在 html 中导入
     ```html
-    <script src='./microappfactory/dist/polyfill.js'></script>
+    <script src='microappfactory/dist/polyfill.js'></script>
     ```
 
 
@@ -126,6 +126,7 @@ const apps = [
  */
 const { start, onGlobalStateChange, setGlobalState } = registerMicroApp(
     {
+        adapter: 'qiankun',
         apps,
         defaultMountApp: '/vue',
         lifecycles: {
@@ -175,7 +176,7 @@ start()
 * 第 2 种写法：在 html 中导入 ```microappfactory.js```
 
 ```html
-<script src='./microappfactory/dist/microappfactory.js'></script>
+<script src='microappfactory/dist/microappfactory.js'></script>
 ```
 
 ```js
@@ -184,6 +185,7 @@ start()
  */
 const { start, onGlobalStateChange, setGlobalState } = window.microappfactory.registerMicroApp(
     {
+        adapter: 'qiankun',
         apps,
         defaultMountApp: '/vue',
         lifecycles: {

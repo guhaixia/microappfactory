@@ -1,5 +1,39 @@
 import { registerMicroApps, start, initGlobalState, setDefaultMountApp, runAfterFirstMounted } from 'qiankun'
-import { AppFacotry, OnGlobalStateChange, SetGlobalState, OffGlobalStateChange } from '../interface'
+import { Frame, AppParams, OnGlobalStateChange, SetGlobalState, OffGlobalStateChange } from '../interface'
+
+export default class QiankunFrame implements Frame {
+    onGlobalStateChange: OnGlobalStateChange = () => {};
+
+    setGlobalState: SetGlobalState = () => false;
+
+    offGlobalStateChange: OffGlobalStateChange = () => false;
+
+    start: () => void;
+
+    constructor({ apps, lifecycles, globalState, defaultMountApp, onFirstAppMounted }: AppParams) {
+        setInterval()
+        setObjectAssign()
+        registerMicroApps(apps, lifecycles)
+
+        if (globalState) {
+            const { onGlobalStateChange, setGlobalState, offGlobalStateChange } = initGlobalState(globalState)
+
+            this.onGlobalStateChange = onGlobalStateChange
+            this.setGlobalState = setGlobalState
+            this.offGlobalStateChange = offGlobalStateChange
+        }
+
+        if (defaultMountApp) {
+            setDefaultMountApp(defaultMountApp)
+        }
+
+        if (onFirstAppMounted) {
+            runAfterFirstMounted(onFirstAppMounted)
+        }
+
+        this.start = start
+    }
+}
 
 /**
  * ie11 Object.assign 兼容性处理
@@ -47,39 +81,5 @@ const setInterval = () => {
 
     if (!window.hasOwnProperty('clearInterval') && window.clearInterval) {
         window['clearInterval'] = window.clearInterval
-    }
-}
-
-export default class QiankunAppFacotry implements AppFacotry {
-    onGlobalStateChange: OnGlobalStateChange = () => {};
-
-    setGlobalState: SetGlobalState = () => false;
-
-    offGlobalStateChange: OffGlobalStateChange = () => false;
-
-    start: () => void;
-
-    constructor({ apps, lifecycles, globalState, defaultMountApp, onFirstAppMounted }) {
-        setInterval()
-        setObjectAssign()
-        registerMicroApps(apps, lifecycles)
-
-        if (globalState) {
-            const { onGlobalStateChange, setGlobalState, offGlobalStateChange } = initGlobalState(globalState)
-
-            this.onGlobalStateChange = onGlobalStateChange
-            this.setGlobalState = setGlobalState
-            this.offGlobalStateChange = offGlobalStateChange
-        }
-
-        if (defaultMountApp) {
-            setDefaultMountApp(defaultMountApp)
-        }
-
-        if (onFirstAppMounted) {
-            runAfterFirstMounted(onFirstAppMounted)
-        }
-
-        this.start = start
     }
 }

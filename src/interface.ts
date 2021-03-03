@@ -1,64 +1,83 @@
-/**
- * 框架适配器
- */
-export enum Adapter {
+export interface Frame {
     /**
-     * qiankun 框架
+     * 启动
      */
-    QianKun = 'qiankun'
+    start: () => void;
+
+    /**
+     * 全局状态变化的监听
+     */
+    onGlobalStateChange: OnGlobalStateChange;
+
+    /**
+     * 改变全局状态
+     */
+    setGlobalState: SetGlobalState;
+
+    /**
+     * 注销全局状态监听
+     */
+    offGlobalStateChange: OffGlobalStateChange;
 }
 
 /**
- * 在主应用监听全局状态，有变更触发 callback，fireImmediately = true 立即触发 callback
+ * 注册的请求参数
  */
-export type OnGlobalStateChange = (callback: (state: object, prevState: object) => void, fireImmediately?: boolean) => void;
+export interface AppParams {
+    /**
+     * 子应用信息数组
+     */
+    apps: Array<RegistrableApp>;
+
+    /**
+     * 生命周期
+     */
+    lifecycles?: LifeCycles;
+
+    /**
+     * 全局状态
+     */
+    globalState?: Record<string, any>;
+
+    /**
+     * 默认进入的子应用
+     */
+    defaultMountApp?: string;
+
+    /**
+     * 第一个子应用mount之后
+     */
+    onFirstAppMounted?: () => void;
+}
 
 /**
- * 设置全局状态
+ * 注册的返回参数
  */
-export type SetGlobalState = (state: object) => boolean;
+export interface RegisterMicroAppResult {
+    /**
+     * 启动
+     */
+    start: () => void;
 
-/**
- * 移除全局状态监听
- */
-export type OffGlobalStateChange = () => boolean;
+    /**
+     * 全局状态变化的监听
+     */
+    onGlobalStateChange: OnGlobalStateChange;
+
+    /**
+     * 改变全局状态
+     */
+    setGlobalState: SetGlobalState;
+
+    /**
+     * 注销全局状态监听
+     */
+    offGlobalStateChange: OffGlobalStateChange;
+}
 
 type Lifecycle = (app: RegistrableApp) => Promise<any>;
 
-
-interface RegistrableApp {
-    /**
-     * 名称
-     */
-    name: string;
-
-    /**
-     * 微应用的入口
-     */
-    entry: string;
-
-    /**
-     * 微应用的容器节点的选择器或者 Element 实例
-     */
-    container: string | HTMLElement;
-
-    /**
-     * 微应用的激活规则
-     */
-    activeRule: (locaiton: Location) => boolean | string | Array<(locaiton: Location) => boolean | string>;
-
-    /**
-     * loading 状态发生变化时会调用的方法
-     */
-    loader?: (loading: boolean) => void;
-
-    /**
-     * 主应用需要传递给微应用的数据
-     */
-    props?: object;
-}
-
-interface LifeCycles {
+export interface LifeCycles {
     /**
      * function before app load
      */
@@ -85,96 +104,60 @@ interface LifeCycles {
     afterUnmount?: Lifecycle | Array<Lifecycle>;
 }
 
-interface RegisterMicroAppParams {
+export interface RegistrableApp {
     /**
-     * 适配器
+     * 名称
      */
-    adapter?: Adapter,
+    name: string;
 
     /**
-     * 子应用信息数组
+     * 微应用的入口
      */
-    apps: Array<RegistrableApp>,
+    entry: string;
 
     /**
-     * 生命周期
+     * 微应用的容器节点的选择器或者 Element 实例
      */
-    lifecycles: LifeCycles,
+    container: string | HTMLElement;
 
     /**
-     * 全局状态
+     * 微应用的激活规则
      */
-    globalState?: object,
+    activeRule: string | ((locaiton: Location) => boolean) | Array<string | ((locaiton: Location) => boolean)>;
 
     /**
-     * 默认进入的子应用
+     * loading 状态发生变化时会调用的方法
      */
-    defaultMountApp?: object,
+    loader?: (loading: boolean) => void;
 
     /**
-     * 第一个子应用mount之后
+     * 主应用需要传递给微应用的数据
      */
-    onFirstAppMounted?: () => void;
+    props?: Record<string, any>;
 }
 
 /**
- * AppFacotry
+ * 在主应用监听全局状态，有变更触发 callback，fireImmediately = true 立即触发 callback
  */
-export interface AppFacotry {
-    /**
-     * 默认进入的子应用
-     */
-    defaultMountApp?: string;
-
-    /**
-     * 启动
-     */
-    start: () => void;
-
-    /**
-     * 全局状态变化的监听
-     */
-    onGlobalStateChange: OnGlobalStateChange;
-
-    /**
-     * 改变全局状态
-     */
-    setGlobalState: SetGlobalState;
-
-    /**
-     * 注销全局状态的监听和改变
-     */
-    offGlobalStateChange: OffGlobalStateChange;
-}
+export type OnGlobalStateChange = (callback: (state: Record<string, any>, prevState: Record<string, any>) => void, fireImmediately?: boolean) => void;
 
 /**
- * 注册的返回参数
+ * 设置全局状态
  */
-interface RegisterMicroAppResult {
-    /**
-     * 启动
-     */
-    start: () => void,
+export type SetGlobalState = (state: Record<string, any>) => boolean;
 
-    /**
-     * 全局状态变化的监听
-     */
-    onGlobalStateChange: OnGlobalStateChange,
-
-    /**
-     * 改变全局状态
-     */
-    setGlobalState: SetGlobalState,
-
-    /**
-     * 注销全局状态监听
-     */
-    offGlobalStateChange: OffGlobalStateChange,
-}
- 
 /**
- * 注册
+ * 移除全局状态监听
  */
-export type RegisterMicroApp = (params: RegisterMicroAppParams) => RegisterMicroAppResult;
+export type OffGlobalStateChange = () => boolean;
 
-export type CreateAppFactory = (params: RegisterMicroAppParams) => AppFacotry;
+export enum Adapter {
+    Qiankun = 'qiankun'
+}
+
+export interface RegisterMicroAppParams extends AppParams {
+    /**
+     * 微前端框架
+     */
+    adapter: Adapter;
+}
